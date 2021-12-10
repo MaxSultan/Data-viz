@@ -1,0 +1,23 @@
+/* #viz {
+  width: 500px;
+  height: 500px;
+} */
+
+body {
+  text-align: center;
+}
+
+.bar {
+  fill: hsla(240, 65%, 45%, 0.88);
+}
+
+.axis,
+.domain {
+  stroke: none;
+}
+
+.x line {
+  stroke: gray;
+  position: relative;
+  z-index: 5;
+}
