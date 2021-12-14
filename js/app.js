@@ -12,11 +12,32 @@ const type = (d) => {
 };
 
 const ready = (data) => {
+  let metric = "HS_US_Boys";
+
+  function click() {
+    switch (this.textContent) {
+      case "High School":
+        metric = "HS_US_Boys";
+        break;
+      case "College":
+        metric = "College_US_Men";
+        break;
+      case "Division 1":
+        metric = "NCAA1_Men";
+        break;
+    }
+    const updatedBarChartData = data.sort((a, b) => {
+      return d3.descending(a[metric], b[metric]);
+    });
+    update(updatedBarChartData);
+  }
+
+  d3.selectAll("button").on("click", click);
+
   const barChartData = data.sort((a, b) => {
     return d3.descending(a.HS_US_Boys, b.HS_US_Boys);
   });
 
-  console.log(barChartData);
   /* Sizing convention */
   const margin = { top: 60, left: 120, right: 90, bottom: 60 },
     width = 560 - margin.left - margin.right,
@@ -37,36 +58,60 @@ const ready = (data) => {
     .scaleBand()
     .domain(barChartData.map((d) => d.Sport))
     .rangeRound([0, height])
-    .paddingInner(0.5);
+    .paddingInner(0.1);
   const yAxis = d3.axisLeft(yScale);
 
   const svg = d3
-    .select("#viz")
+    .select("#participation-viz")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-    .style("border", "solid")
-    .style("border-width", "2px")
-    .style("border-radius", "5px")
+    // .style("border", "solid")
+    // .style("border-width", "2px")
+    // .style("border-radius", "5px")
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
   /* Add axes */
-  svg.append("g").attr("class", "x").call(xAxis);
-  svg.append("g").call(yAxis);
+  const xAxisDraw = svg.append("g").attr("class", "x").call(xAxis);
+  const yAxisDraw = svg.append("g").call(yAxis);
+
+  update(barChartData);
+  //   const dur = 1000;
+  //   const t = d3.transition().duration(dur);
 
   /* Add data items */
-  svg
-    .selectAll(".bar")
-    .data(barChartData)
-    .join((enter) =>
-      enter
-        .append("rect")
-        .attr("class", "bar")
-        .attr("y", (d) => yScale(d.Sport))
-        .attr("height", (d) => yScale.bandwidth())
-        .attr("width", (d) => xScale(d.HS_US_Boys))
-    );
+  function update(data) {
+    xScale.domain([0, d3.max(data, (d) => d[metric])]);
+    yScale.domain(data.map((d) => d.Sport));
+    svg
+      .selectAll(".bar")
+      .data(data, (d) => d.Sport)
+      .join(
+        (enter) => {
+          enter
+            .append("rect")
+            .attr("class", "bar")
+            .attr("y", (d) => yScale(d.Sport))
+            .attr("height", (d) => yScale.bandwidth())
+            .transition()
+            .delay((d, i) => i * 20)
+            .duration(1000)
+            .attr("width", (d) => xScale(d.HS_US_Boys))
+            .style("fill", "#00b5e2");
+        },
+        (update) =>
+          update
+            .transition()
+            .duration(1000)
+            .attr("y", (d) => yScale(d.Sport))
+            .attr("width", (d) => xScale(d[metric])),
+        (exit) => exit.remove()
+      );
+
+    xAxisDraw.transition().duration(1000).call(xAxis.scale(xScale));
+    yAxisDraw.transition().duration(1000).call(yAxis.scale(yScale));
+  }
 };
 
 d3.csv("data/NCAA_Men.csv", type).then((res) => ready(res));
