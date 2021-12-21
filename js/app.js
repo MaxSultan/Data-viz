@@ -14,7 +14,8 @@ const type = (d) => {
 const ready = (data) => {
   let metric = "HS_US_Boys";
 
-  function click() {
+  function click(event) {
+    const title = d3.select("#title");
     switch (this.textContent) {
       case "High School":
         metric = "HS_US_Boys";
@@ -26,6 +27,12 @@ const ready = (data) => {
         metric = "NCAA1_Men";
         break;
     }
+    document
+      .getElementsByClassName("selected-button")[0]
+      .classList.remove("selected-button");
+    event.target.classList.add("selected-button");
+    title.html(`Average Men's ${this.textContent} Participants by sport`);
+
     const updatedBarChartData = data.sort((a, b) => {
       return d3.descending(a[metric], b[metric]);
     });
@@ -39,8 +46,8 @@ const ready = (data) => {
   });
 
   /* Sizing convention */
-  const margin = { top: 60, left: 120, right: 90, bottom: 60 },
-    width = 560 - margin.left - margin.right,
+  const margin = { top: 60, left: 200, right: 90, bottom: 60 },
+    width = 700 - margin.left - margin.right,
     height = 560 - margin.bottom - margin.top;
 
   /* X values */
@@ -66,9 +73,6 @@ const ready = (data) => {
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-    // .style("border", "solid")
-    // .style("border-width", "2px")
-    // .style("border-radius", "5px")
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -94,6 +98,11 @@ const ready = (data) => {
             .attr("class", "bar")
             .attr("y", (d) => yScale(d.Sport))
             .attr("height", (d) => yScale.bandwidth())
+            .attr("data-sport", (d) => d.Sport)
+            .attr("data-participation", (d) => d.HS_US_Boys)
+            .on("mouseenter", mouseenter)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave)
             .transition()
             .delay((d, i) => i * 20)
             .duration(1000)
@@ -105,12 +114,37 @@ const ready = (data) => {
             .transition()
             .duration(1000)
             .attr("y", (d) => yScale(d.Sport))
-            .attr("width", (d) => xScale(d[metric])),
+            .attr("width", (d) => xScale(d[metric]))
+            .attr("data-participation", (d) => d[metric]),
         (exit) => exit.remove()
       );
 
     xAxisDraw.transition().duration(1000).call(xAxis.scale(xScale));
     yAxisDraw.transition().duration(1000).call(yAxis.scale(yScale));
+  }
+
+  const tip = d3.select("#tooltip");
+  const tipHeader = d3.select("#tooltip-header");
+  const tipBody = d3.select("#tooltip-body");
+
+  function mouseenter(event) {
+    const selectedData = d3.select(this).data()[0];
+    tip
+      .style("left", event.clientX + "px")
+      .style("top", event.clientY + "px")
+      .transition()
+      .style("opacity", 0.98);
+    tipHeader.html("Sport: " + selectedData.Sport);
+    tipBody.html("Participants: " + selectedData[metric].toLocaleString());
+    d3.select("#tooltip").style("opacity", 0.98);
+  }
+
+  function mousemove(event) {
+    tip.style("left", event.clientX + "px").style("top", event.clientY + "px");
+  }
+
+  function mouseleave(event) {
+    tip.transition().style("opacity", 0);
   }
 };
 

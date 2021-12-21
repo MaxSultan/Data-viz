@@ -23,32 +23,31 @@
     <script src="node_modules/d3-ease/dist/d3-ease.js"></script>
     <script src="node_modules/d3-transition/dist/d3-transition.js"></script>
     <link rel="stylesheet" href="./styles/styles.css" />
-    <!-- <link rel="stylesheet" href="https://unpkg.com/mvp.css" /> -->
     <!-- <link rel="stylesheet" href="./styles/global.css" /> -->
   </head>
   <body>
     <h1>Tennis is the most competitive sport to play in college</h1>
     <div class="data-container">
       <div>
-        <h4>Average Men's Participants by sport</h4>
-        <div id="participation-viz"></div>
-        <div id="tooltip"></div>
+        <h4 id="title">Average Men's High School Participants by sport</h4>
         <div>
-          <button>High School</button>
+          <button class="selected-button">High School</button>
           <button>College</button>
           <button>Division 1</button>
         </div>
+        <div id="participation-viz"></div>
+        <div id="tooltip">
+          <p id="tooltip-header"></p>
+          <p id="tooltip-body"></p>
+        </div>
       </div>
       <div>
-        <h4 class="title2">Odds of playing in college</h4>
-        <div id="percent-viz"></div>
-        <div id="odd-viz"></div>
         <div id="selectors">
-          <select name="level" id="level-selector">
+          <select name="level" id="level-selector" class="classic">
             <option value="College" selected>College</option>
             <option value="NCAA1">Division 1</option>
           </select>
-          <select name="sport" id="sport-selector">
+          <select name="sport" id="sport-selector" class="classic">
             <option value="Football" selected>Football</option>
             <option value="Track & Field">Track and Field</option>
             <option value="Basketball">Basketball</option>
@@ -65,8 +64,24 @@
             <option value="Water Polo">water Polo</option>
           </select>
         </div>
+        <h4 class="title2">
+          Percent of high school participants playing in college
+        </h4>
+        <div id="percent-viz"></div>
+        <h4 class="title2">
+          Odds of a high school participant playing in college
+        </h4>
+        <div id="odd-viz"></div>
       </div>
     </div>
+    <footer>
+      <p>
+        All data comes from
+        <a href="https://scholarshipstats.com/varsityodds"
+          >https://scholarshipstats.com/varsityodds</a
+        >
+      </p>
+    </footer>
     <script src="js/app.js"></script>
     <script src="js/percentOdds.js"></script>
   </body>

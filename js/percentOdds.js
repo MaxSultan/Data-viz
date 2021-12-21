@@ -25,11 +25,8 @@ const percentReady = (data) => {
   let selectedSport = sportSelect.value;
   let selectedLevel = levelSelect.value;
   let displayedData = data.filter((d) => d.Sport === selectedSport)[0];
-  console.log(displayedData);
   let displayedPercent = displayedData[`Perc_${selectedLevel}`];
   let displayedOdds = displayedData[`${selectedLevel}_Odds`];
-
-  console.log(displayedOdds);
 
   const svg2 = d3
     .select("#percent-viz")
@@ -39,6 +36,8 @@ const percentReady = (data) => {
     .style("border", "solid")
     .style("border-width", "2px")
     .style("border-radius", "5px")
+    .style("border-color", "#1D252D")
+    .style("background-color", "#fff")
     .append("g")
     .attr("transform", `translate(${margin.left + 10}, ${margin.top})`)
     .append("text")
@@ -53,6 +52,8 @@ const percentReady = (data) => {
     .style("border", "solid")
     .style("border-width", "2px")
     .style("border-radius", "5px")
+    .style("border-color", "#1D252D")
+    .style("background-color", "#fff")
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .append("text")

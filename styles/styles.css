@@ -1,15 +1,29 @@
-/* #viz {
-  width: 500px;
-  height: 500px;
-} */
+body,
+text {
+  font-family: "Avenir", sans-serif;
+}
 
 body {
   text-align: center;
-  color: #1d252d;
+  min-height: 100vh;
 }
 
 .bar {
   fill: #47dadd;
+}
+
+#tooltip {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+  color: #bbc5cf;
+  background-color: #1d252d;
+  padding: 0px 30px;
+  border-radius: 3px;
+}
+
+#tooltip-header {
+  padding: 5px;
 }
 
 .axis,
@@ -29,12 +43,8 @@ body {
   margin-top: 50px;
 }
 
-.title2 {
-  margin-bottom: 70px;
-}
-
 button {
-  border: 2px solid #0c8e85;
+  border: 2px ridge #0c8e85;
   border-radius: 5px;
   padding: 12px;
   color: #0c8e85;
@@ -42,20 +52,83 @@ button {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12),
     0 4px 4px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.12),
     0 16px 16px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
 }
 
 button:hover {
-  background-color: #0c8e85;
-  color: #edf1f4;
+  background-color: #bbc5cf;
+  color: #0c8e85;
 }
 
 button:active {
   background-color: #0cbf90;
-  border: 2px solid #0cbf90;
+  border: 2px inset #0cbf90;
   color: #1d252d;
   box-shadow: none;
 }
 
-/* #participation-viz {
-  position: relative;
-} */
+.selected-button {
+  background-color: #0c8e85;
+  color: #edf1f4;
+  box-shadow: none;
+  border: inset #0c8e85;
+}
+
+.selected-button:hover {
+  background-color: #0c8e85;
+  color: #edf1f4;
+  box-shadow: none;
+  border: inset #0c8e85;
+  cursor: not-allowed;
+}
+
+footer {
+  margin-top: 50px;
+}
+
+a {
+  color: #3f7fef;
+}
+
+a:visited {
+  color: #175084;
+}
+
+g > text {
+  font-size: 20px;
+}
+
+#selectors {
+  margin-bottom: 45px;
+  margin-top: 65px;
+}
+
+select {
+  /* styling */
+  background-color: white;
+  border: 2px solid #0c8e85;
+  border-radius: 4px;
+  display: inline-block;
+  font: inherit;
+  line-height: 1.5em;
+  padding: 0.5em 3.5em 0.5em 1em;
+
+  /* reset */
+
+  margin: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+select.classic {
+  background-image: linear-gradient(45deg, transparent 50%, #fff 50%),
+    linear-gradient(135deg, #fff 50%, transparent 50%),
+    linear-gradient(to right, #0c8e85, #0c8e85);
+  background-position: calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px), 100% 0;
+  background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
+  background-repeat: no-repeat;
+}
