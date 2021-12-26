@@ -27,6 +27,7 @@ const ready = (data) => {
         metric = "NCAA1_Men";
         break;
     }
+
     document
       .getElementsByClassName("selected-button")[0]
       .classList.remove("selected-button");
@@ -39,7 +40,7 @@ const ready = (data) => {
     update(updatedBarChartData);
   }
 
-  d3.selectAll("button").on("click", click);
+  d3.select("#participation-buttons").selectAll("button").on("click", click);
 
   const barChartData = data.sort((a, b) => {
     return d3.descending(a.HS_US_Boys, b.HS_US_Boys);
@@ -76,15 +77,34 @@ const ready = (data) => {
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+  // Transitions
+  const dur = 1000;
+  //   const t = d3.transition().duration(dur);
+
+  svg
+    .selectAll(".bar")
+    .data(data, (d) => d.Sport)
+    .enter()
+    .append("rect")
+    .attr("class", "bar")
+    .attr("y", (d) => yScale(d.Sport))
+    .attr("height", (d) => yScale.bandwidth())
+    .attr("data-sport", (d) => d.Sport)
+    .attr("data-participation", (d) => d.HS_US_Boys)
+    .on("mouseenter", mouseenter)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave)
+    .transition()
+    .delay((d, i) => i * 20)
+    .duration(dur)
+    .attr("width", (d) => xScale(d.HS_US_Boys))
+    .style("fill", "#00b5e2");
+
   /* Add axes */
   const xAxisDraw = svg.append("g").attr("class", "x").call(xAxis);
   const yAxisDraw = svg.append("g").call(yAxis);
 
-  update(barChartData);
-  //   const dur = 1000;
-  //   const t = d3.transition().duration(dur);
-
-  /* Add data items */
+  /* Add data items and deal with updated items/axes/scales */
   function update(data) {
     xScale.domain([0, d3.max(data, (d) => d[metric])]);
     yScale.domain(data.map((d) => d.Sport));
@@ -105,24 +125,25 @@ const ready = (data) => {
             .on("mouseleave", mouseleave)
             .transition()
             .delay((d, i) => i * 20)
-            .duration(1000)
+            .duration(dur)
             .attr("width", (d) => xScale(d.HS_US_Boys))
             .style("fill", "#00b5e2");
         },
         (update) =>
           update
             .transition()
-            .duration(1000)
+            .duration(dur)
             .attr("y", (d) => yScale(d.Sport))
             .attr("width", (d) => xScale(d[metric]))
             .attr("data-participation", (d) => d[metric]),
         (exit) => exit.remove()
       );
 
-    xAxisDraw.transition().duration(1000).call(xAxis.scale(xScale));
-    yAxisDraw.transition().duration(1000).call(yAxis.scale(yScale));
+    xAxisDraw.transition().duration(dur).call(xAxis.scale(xScale));
+    yAxisDraw.transition().duration(dur).call(yAxis.scale(yScale));
   }
 
+  /* tooltip and event listener functions */
   const tip = d3.select("#tooltip");
   const tipHeader = d3.select("#tooltip-header");
   const tipBody = d3.select("#tooltip-body");

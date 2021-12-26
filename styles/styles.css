@@ -32,7 +32,7 @@ body {
 }
 
 .x line {
-  stroke: gray;
+  stroke: white;
   position: relative;
   z-index: 5;
 }
