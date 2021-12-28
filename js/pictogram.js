@@ -66,7 +66,7 @@ const percentReady = (data) => {
       if (i === updateNum) {
         svg4
           .append("svg:image")
-          .attr("xlink:href", "../assets/person_red.svg")
+          .attr("xlink:href", "../assets/person_blue.svg")
           .attr("width", personWidth)
           .attr("height", personHeight)
           .attr("x", calculateColumnNum(i))
