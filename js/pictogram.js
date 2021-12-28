@@ -37,7 +37,7 @@ const percentReady = (data) => {
       .select("#pictogram")
       .append("svg")
       .attr("width", 500)
-      .attr("height", 1000)
+      .attr("height", 720)
       .append("g")
       .attr("transform", `translate(80,0)`);
 
