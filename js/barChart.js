@@ -98,8 +98,7 @@ const ready = (data) => {
     .delay((d, i) => i * 20)
     .duration(dur)
     .attr("width", (d) => xScale(d.HS_US_Boys))
-    .style("fill", "#00b5e2");
-
+    .style("fill", (d) => (d.Sport === "Tennis" ? "#0D76B7" : "#BBC5CF"));
   /* Add axes */
   const xAxisDraw = svg.append("g").attr("class", "x").call(xAxis);
   const yAxisDraw = svg.append("g").call(yAxis);
