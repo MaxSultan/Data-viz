@@ -66,7 +66,7 @@ const percentReady = (data) => {
       if (i === updateNum) {
         svg4
           .append("svg:image")
-          .attr("xlink:href", "../assets/person_blue.svg")
+          .attr("xlink:href", "./assets/person_blue.svg")
           .attr("width", personWidth)
           .attr("height", personHeight)
           .attr("x", calculateColumnNum(i))
@@ -74,7 +74,7 @@ const percentReady = (data) => {
       } else {
         svg4
           .append("svg:image")
-          .attr("xlink:href", "../assets/person-silhouette-svgrepo-com.svg")
+          .attr("xlink:href", "./assets/person-silhouette-svgrepo-com.svg")
           .attr("width", personWidth)
           .attr("height", personHeight)
           .attr("x", calculateColumnNum(i))
