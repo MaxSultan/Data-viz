@@ -1,25 +1,17 @@
 const percentType = (d) => {
   return {
     Sport: d.Sport,
-    /* chart 1 - bar chart showing participation by numbers */
     HS_US_Boys: +d.HS_US_Boys,
     College_US_Men: +d.College_US_Men,
     NCAA1_Men: +d.NCAA1_Men,
-    /* chart 2 - text showing % of HS athletes in college/NCAA1 */
     Perc_College: +d.Perc_College,
     Perc_NCAA1: +d.Perc_NCAA1,
-    /* chart 3 - text showing odds of playing college/NCAA1 */
     College_Odds: d.College_Odds,
     NCAA1_Odds: d.NCAA1_Odds,
   };
 };
 
 const percentReady = (data) => {
-  /* Sizing convention */
-  const margin = { top: 65, left: 90, right: 25, bottom: 25 },
-    width = 700 - margin.left - margin.right,
-    height = 50 - margin.bottom - margin.top;
-
   const sportSelect = document.getElementById("sport-selector");
   const levelSelect = document.getElementById("level-selector");
   let selectedSport = sportSelect.value;

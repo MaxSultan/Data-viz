@@ -15,7 +15,6 @@ const ready = (data) => {
   let metric = "HS_US_Boys";
 
   function click(event) {
-    // const title = d3.select("#title");
     switch (this.textContent) {
       case "High School":
         metric = "HS_US_Boys";
@@ -32,7 +31,6 @@ const ready = (data) => {
       .getElementsByClassName("selected-button")[0]
       .classList.remove("selected-button");
     event.target.classList.add("selected-button");
-    // title.html(`Average Men's ${this.textContent} Participants by sport`);
 
     const updatedBarChartData = data.sort((a, b) => {
       return d3.descending(a[metric], b[metric]);
