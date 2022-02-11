@@ -15,7 +15,7 @@ const ready = (data) => {
   let metric = "HS_US_Boys";
 
   function click(event) {
-    const title = d3.select("#title");
+    // const title = d3.select("#title");
     switch (this.textContent) {
       case "High School":
         metric = "HS_US_Boys";
@@ -32,7 +32,7 @@ const ready = (data) => {
       .getElementsByClassName("selected-button")[0]
       .classList.remove("selected-button");
     event.target.classList.add("selected-button");
-    title.html(`Average Men's ${this.textContent} Participants by sport`);
+    // title.html(`Average Men's ${this.textContent} Participants by sport`);
 
     const updatedBarChartData = data.sort((a, b) => {
       return d3.descending(a[metric], b[metric]);
@@ -48,7 +48,7 @@ const ready = (data) => {
 
   /* Sizing convention */
   const margin = { top: 60, left: 200, right: 90, bottom: 60 },
-    width = 700 - margin.left - margin.right,
+    width = 600 - margin.left - margin.right,
     height = 560 - margin.bottom - margin.top;
 
   /* X values */
@@ -72,8 +72,15 @@ const ready = (data) => {
   const svg = d3
     .select("#participation-viz")
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    // viewBox makes the graph mobile responsive
+    .attr(
+      "viewBox",
+      `0 0 ${height + margin.top + margin.bottom} ${
+        width + margin.left + margin.right
+      }`
+    )
+    // .attr("width", width + margin.left + margin.right)
+    // .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 

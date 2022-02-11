@@ -30,16 +30,16 @@ const percentReady = (data) => {
   let displayedNum = parseInt(displayedOdds.split(":")[0], 10);
 
   // adds a pictogram for the first selected odds
-  // TODO: make this dynamic
 
   function updatePictogram(updateNum) {
     const svg4 = d3
       .select("#pictogram")
       .append("svg")
-      .attr("width", 500)
-      .attr("height", 720)
+      .attr("viewBox", `0 0 720 800`)
+      // .attr("width", 500)
+      // .attr("height", 720)
       .append("g")
-      .attr("transform", `translate(80,0)`);
+      .attr("transform", `translate(180,0)`);
 
     const personHeight = 50;
     const personWidth = 60;

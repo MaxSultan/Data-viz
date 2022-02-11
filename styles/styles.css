@@ -39,7 +39,7 @@ body {
 
 .data-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   margin-top: 50px;
 }
 
@@ -130,4 +130,21 @@ select.classic {
     calc(100% - 15px) calc(1em + 2px), 100% 0;
   background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
   background-repeat: no-repeat;
+}
+
+.half-section {
+  width: 45%;
+  max-width: 90vh;
+}
+
+@media only screen and (max-width: 1000px) {
+  .data-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .half-section {
+    width: 90%;
+  }
 }
