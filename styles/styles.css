@@ -148,3 +148,7 @@ select.classic {
     width: 90%;
   }
 }
+
+.gender-selector {
+  border: 0;
+}

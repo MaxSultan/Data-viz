@@ -1,29 +1,43 @@
-const type = (d) => {
-  return {
-    Sport: d.Sport,
-    HS_US_Boys: +d.HS_US_Boys,
-    College_US_Men: +d.College_US_Men,
-    NCAA1_Men: +d.NCAA1_Men,
-    Perc_College: +d.Perc_College,
-    Perc_NCAA1: +d.Perc_NCAA1,
-    College_Odds: d.College_Odds,
-    NCAA1_Odds: d.NCAA1_Odds,
-  };
-};
+const type = (d, string) => ({
+  Sport: d.Sport, // categorical
+  HS_US: +d[`HS_US_${string}`], // quantitative
+  College_US: +d[`College_US_${string}`], // quantitative
+  NCAA1: +d[`NCAA1_${string}`], // quantitative
+  Perc_College: +d[`Perc_College_${string}`], // quantitative
+  Perc_NCAA1: +d[`Perc_NCAA1_${string}`], // quantitative
+  College_Odds: d[`College_Odds_${string}`], // ordered? quantitative?
+  NCAA1_Odds: d[`NCAA1_Odds_${string}`], // ordered? quantitative?
+});
 
-const ready = (data) => {
-  let metric = "HS_US_Boys";
+const ready = (male, female) => {
+  let metric = "HS_US";
+  let gender = [...document.getElementsByName("gender")].find(
+    (input) => input.checked
+  ).value;
+
+  let genderData = gender === "Male" ? male : female;
+
+  const radioClick = () => {
+    gender = [...document.getElementsByName("gender")].find(
+      (input) => input.checked
+    ).value;
+    genderData = gender === "Male" ? male : female;
+    const updatedBarChartData = genderData.sort((a, b) => {
+      return d3.descending(a[metric], b[metric]);
+    });
+    update(updatedBarChartData);
+  };
 
   function click(event) {
     switch (this.textContent) {
       case "High School":
-        metric = "HS_US_Boys";
+        metric = "HS_US";
         break;
       case "College":
-        metric = "College_US_Men";
+        metric = "College_US";
         break;
       case "Division 1":
-        metric = "NCAA1_Men";
+        metric = "NCAA1";
         break;
     }
 
@@ -32,16 +46,14 @@ const ready = (data) => {
       .classList.remove("selected-button");
     event.target.classList.add("selected-button");
 
-    const updatedBarChartData = data.sort((a, b) => {
+    const updatedBarChartData = genderData.sort((a, b) => {
       return d3.descending(a[metric], b[metric]);
     });
     update(updatedBarChartData);
   }
 
-  d3.select("#participation-buttons").selectAll("button").on("click", click);
-
-  const barChartData = data.sort((a, b) => {
-    return d3.descending(a.HS_US_Boys, b.HS_US_Boys);
+  const barChartData = genderData.sort((a, b) => {
+    return d3.descending(a.HS_US, b.HS_US);
   });
 
   /* Sizing convention */
@@ -50,7 +62,7 @@ const ready = (data) => {
     height = 560 - margin.bottom - margin.top;
 
   /* X values */
-  const xMax = d3.max(barChartData, (d) => d.HS_US_Boys);
+  const xMax = d3.max(barChartData, (d) => d.HS_US);
   const xScale = d3.scaleLinear().domain([0, xMax]).range([0, width]);
   const xAxis = d3
     .axisTop(xScale)
@@ -86,23 +98,27 @@ const ready = (data) => {
   const dur = 1000;
   //   const t = d3.transition().duration(dur);
 
+  d3.select(".gender-selector").selectAll("input").on("click", radioClick);
+
+  d3.select("#participation-buttons").selectAll("button").on("click", click);
+
   svg
     .selectAll(".bar")
-    .data(data, (d) => d.Sport)
+    .data(genderData, (d) => d.Sport)
     .enter()
     .append("rect")
     .attr("class", "bar")
     .attr("y", (d) => yScale(d.Sport))
     .attr("height", (d) => yScale.bandwidth())
     .attr("data-sport", (d) => d.Sport)
-    .attr("data-participation", (d) => d.HS_US_Boys)
+    .attr("data-participation", (d) => d.HS_US)
     .on("mouseenter", mouseenter)
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave)
     .transition()
     .delay((d, i) => i * 20)
     .duration(dur)
-    .attr("width", (d) => xScale(d.HS_US_Boys))
+    .attr("width", (d) => xScale(d.HS_US))
     .style("fill", (d) => (d.Sport === "Tennis" ? "#0D76B7" : "#BBC5CF"));
   /* Add axes */
   const xAxisDraw = svg.append("g").attr("class", "x").call(xAxis);
@@ -123,14 +139,14 @@ const ready = (data) => {
             .attr("y", (d) => yScale(d.Sport))
             .attr("height", (d) => yScale.bandwidth())
             .attr("data-sport", (d) => d.Sport)
-            .attr("data-participation", (d) => d.HS_US_Boys)
+            .attr("data-participation", (d) => d.HS_US)
             .on("mouseenter", mouseenter)
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
             .transition()
             .delay((d, i) => i * 20)
             .duration(dur)
-            .attr("width", (d) => xScale(d.HS_US_Boys))
+            .attr("width", (d) => xScale(d.HS_US))
             .style("fill", "#00b5e2");
         },
         (update) =>
@@ -173,6 +189,13 @@ const ready = (data) => {
   }
 };
 
-d3.csv("data/NCAA_Men.csv", type).then((res) => ready(res));
+const men = d3.csv("data/NCAA_Men.csv", (data) => type(data, "Men"));
+const women = d3.csv("data/NCAA_Women.csv", (data) => type(data, "Women"));
+
+Promise.all([men, women]).then((res) => {
+  console.log(res);
+
+  ready(res[0], res[1]);
+});
 
 // data from: https://scholarshipstats.com/varsityodds

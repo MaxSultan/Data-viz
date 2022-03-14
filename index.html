@@ -10,8 +10,8 @@
     <title>Chances of playing in college</title>
     <script src="node_modules/d3-dsv/dist/d3-dsv.min.js"></script>
     <script src="node_modules/d3-fetch/dist/d3-fetch.min.js"></script>
-    <script src="node_modules/d3-array/dist/d3-array.min.js"></script>
-    <script src="node_modules/d3-scale/dist/d3-scale.min.js"></script>
+    <script src="node_modules/d3-array/dist/d3-array.js"></script>
+    <script src="node_modules/d3-scale/dist/d3-scale.js"></script>
     <script src="node_modules/d3-axis/dist/d3-axis.min.js"></script>
     <script src="node_modules/d3-selection/dist/d3-selection.min.js"></script>
     <script src="node_modules/d3-format/dist/d3-format.min.js"></script>
@@ -29,9 +29,25 @@
   </head>
   <body>
     <h1>Tennis is the most competitive sport to play in college</h1>
+    <fieldset class="gender-selector">
+      <label>
+        Male:
+        <input
+          type="radio"
+          name="gender"
+          value="Male"
+          id="Male"
+          checked="checked"
+        />
+      </label>
+      <label>
+        Female:
+        <input type="radio" name="gender" value="Female" id="Female" />
+      </label>
+    </fieldset>
     <div class="data-container">
       <section class="half-section">
-        <h2 id="title">Average Male Participants by sport</h2>
+        <h2 id="title">Average Participants by sport</h2>
         <div id="participation-buttons">
           <button class="selected-button">High School</button>
           <button>College</button>
@@ -45,8 +61,9 @@
       </section>
       <section class="half-section">
         <h2 id="title">
-          Odds of a male High School participant playing at the next level
+          Odds of a High School participant playing at the next level
         </h2>
+
         <div id="selectors">
           <select name="level" id="level-selector" class="classic">
             <option value="College" selected>College</option>
@@ -82,6 +99,6 @@
       </p>
     </footer>
     <script src="js/barChart.js"></script>
-    <script src="js/pictogram.js"></script>
+    <!-- <script src="js/pictogram.js"></script> -->
   </body>
 </html>
