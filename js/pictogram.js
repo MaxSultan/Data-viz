@@ -1,22 +1,15 @@
-const percentType = (d) => {
-  return {
-    Sport: d.Sport,
-    HS_US_Boys: +d.HS_US_Boys,
-    College_US_Men: +d.College_US_Men,
-    NCAA1_Men: +d.NCAA1_Men,
-    Perc_College: +d.Perc_College,
-    Perc_NCAA1: +d.Perc_NCAA1,
-    College_Odds: d.College_Odds,
-    NCAA1_Odds: d.NCAA1_Odds,
-  };
-};
+const readyPictogram = (male, female) => {
+  let gender = [...document.getElementsByName("gender")].find(
+    (input) => input.checked
+  ).value;
 
-const percentReady = (data) => {
+  let genderData = gender === "Male" ? male : female;
+
   const sportSelect = document.getElementById("sport-selector");
   const levelSelect = document.getElementById("level-selector");
   let selectedSport = sportSelect.value;
   let selectedLevel = levelSelect.value;
-  let displayedData = data.filter((d) => d.Sport === selectedSport)[0];
+  let displayedData = genderData.filter((d) => d.Sport === selectedSport)[0];
   let displayedPercent = displayedData[`Perc_${selectedLevel}`];
   let displayedOdds = displayedData[`${selectedLevel}_Odds`];
   let displayedNum = parseInt(displayedOdds.split(":")[0], 10);
@@ -86,37 +79,49 @@ const percentReady = (data) => {
       `${displayedPercent}% or 1 in ${displayedNum.toString()} high school participants play in ${selectedLevel}`
     );
 
-  const updateItem = () => {
+  const updatePictogramData = () => {
+    displayedData = genderData.filter((d) => d.Sport === selectedSport)[0];
+    displayedOdds = displayedData[`${selectedLevel}_Odds`];
+    displayedPercent = displayedData[`Perc_${selectedLevel}`];
+    displayedNum = parseInt(displayedOdds.split(":")[0], 10);
+    d3.select("#pictogram").select("svg").remove();
     svg2.text(
       `${displayedPercent}% or 1 in ${displayedNum.toString()} high school participants play in ${selectedLevel}`
     );
     updatePictogram(displayedNum);
   };
 
-  function removeSVG(selector) {
-    d3.select(selector).select("svg").remove();
-  }
-
   levelSelect.onchange = (event) => {
     selectedLevel = event.target.value;
-    displayedData = data.filter((d) => d.Sport === selectedSport)[0];
-    displayedOdds = displayedData[`${selectedLevel}_Odds`];
-    displayedPercent = displayedData[`Perc_${selectedLevel}`];
-    displayedNum = parseInt(displayedOdds.split(":")[0], 10);
-    removeSVG("#pictogram");
-    updateItem();
+    updatePictogramData();
   };
   sportSelect.onchange = (event) => {
     selectedSport = event.target.value;
-    displayedData = data.filter((d) => d.Sport === selectedSport)[0];
-    displayedOdds = displayedData[`${selectedLevel}_Odds`];
-    displayedPercent = displayedData[`Perc_${selectedLevel}`];
-    displayedNum = parseInt(displayedOdds.split(":")[0], 10);
-    removeSVG("#pictogram");
-    updateItem();
+    updatePictogramData();
   };
-};
+  const radioClick2 = () => {
+    gender = [...document.getElementsByName("gender")].find(
+      (input) => input.checked
+    ).value;
+    genderData = gender === "Male" ? male : female;
 
-d3.csv("data/NCAA_Men.csv", percentType).then((res) => percentReady(res));
+    const selectedGenderOptions = genderData.map((d) => d.Sport);
+    sportSelect.innerHTML = "";
+    for (var i = 0; i < selectedGenderOptions.length; i++) {
+      var opt = selectedGenderOptions[i];
+
+      var el = document.createElement("option");
+      el.text = opt;
+      el.value = opt;
+
+      sportSelect.add(el);
+    }
+    // update the options to correct gender options
+    updatePictogramData();
+  };
+  document
+    .querySelectorAll("fieldset.gender-selector label input")
+    .forEach((element) => element.addEventListener("click", radioClick2));
+};
 
 // data from: https://scholarshipstats.com/varsityodds

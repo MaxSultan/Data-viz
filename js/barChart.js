@@ -1,32 +1,10 @@
-const type = (d, string) => ({
-  Sport: d.Sport, // categorical
-  HS_US: +d[`HS_US_${string}`], // quantitative
-  College_US: +d[`College_US_${string}`], // quantitative
-  NCAA1: +d[`NCAA1_${string}`], // quantitative
-  Perc_College: +d[`Perc_College_${string}`], // quantitative
-  Perc_NCAA1: +d[`Perc_NCAA1_${string}`], // quantitative
-  College_Odds: d[`College_Odds_${string}`], // ordered? quantitative?
-  NCAA1_Odds: d[`NCAA1_Odds_${string}`], // ordered? quantitative?
-});
-
-const ready = (male, female) => {
+const readyBarChart = (male, female) => {
   let metric = "HS_US";
   let gender = [...document.getElementsByName("gender")].find(
     (input) => input.checked
   ).value;
 
   let genderData = gender === "Male" ? male : female;
-
-  const radioClick = () => {
-    gender = [...document.getElementsByName("gender")].find(
-      (input) => input.checked
-    ).value;
-    genderData = gender === "Male" ? male : female;
-    const updatedBarChartData = genderData.sort((a, b) => {
-      return d3.descending(a[metric], b[metric]);
-    });
-    update(updatedBarChartData);
-  };
 
   function click(event) {
     switch (this.textContent) {
@@ -46,10 +24,7 @@ const ready = (male, female) => {
       .classList.remove("selected-button");
     event.target.classList.add("selected-button");
 
-    const updatedBarChartData = genderData.sort((a, b) => {
-      return d3.descending(a[metric], b[metric]);
-    });
-    update(updatedBarChartData);
+    updateBarChart(genderData);
   }
 
   const barChartData = genderData.sort((a, b) => {
@@ -98,8 +73,6 @@ const ready = (male, female) => {
   const dur = 1000;
   //   const t = d3.transition().duration(dur);
 
-  d3.select(".gender-selector").selectAll("input").on("click", radioClick);
-
   d3.select("#participation-buttons").selectAll("button").on("click", click);
 
   svg
@@ -125,9 +98,15 @@ const ready = (male, female) => {
   const yAxisDraw = svg.append("g").call(yAxis);
 
   /* Add data items and deal with updated items/axes/scales */
-  function update(data) {
+  function updateBarChart(data) {
+    data = data.sort((a, b) => {
+      return d3.descending(a[metric], b[metric]);
+    });
+    // update scale domains
     xScale.domain([0, d3.max(data, (d) => d[metric])]);
     yScale.domain(data.map((d) => d.Sport));
+
+    // update data encoding with data join
     svg
       .selectAll(".bar")
       .data(data, (d) => d.Sport)
@@ -139,15 +118,15 @@ const ready = (male, female) => {
             .attr("y", (d) => yScale(d.Sport))
             .attr("height", (d) => yScale.bandwidth())
             .attr("data-sport", (d) => d.Sport)
-            .attr("data-participation", (d) => d.HS_US)
+            .attr("data-participation", (d) => d[metric])
             .on("mouseenter", mouseenter)
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
             .transition()
             .delay((d, i) => i * 20)
             .duration(dur)
-            .attr("width", (d) => xScale(d.HS_US))
-            .style("fill", "#00b5e2");
+            .attr("width", (d) => xScale(d[metric]))
+            .style("fill", "#e6e6e6");
         },
         (update) =>
           update
@@ -159,6 +138,7 @@ const ready = (male, female) => {
         (exit) => exit.remove()
       );
 
+    // update drawn axes
     xAxisDraw.transition().duration(dur).call(xAxis.scale(xScale));
     yAxisDraw.transition().duration(dur).call(yAxis.scale(yScale));
   }
@@ -187,15 +167,22 @@ const ready = (male, female) => {
   function mouseleave(event) {
     tip.transition().style("opacity", 0);
   }
+
+  const radioClick = () => {
+    gender = [...document.getElementsByName("gender")].find(
+      (input) => input.checked
+    ).value;
+    genderData = gender === "Male" ? male : female;
+    updateBarChart(genderData);
+  };
+
+  console.log(
+    document.querySelectorAll("fieldset.gender-selector label input")
+  );
+
+  document
+    .querySelectorAll("fieldset.gender-selector label input")
+    .forEach((element) => element.addEventListener("click", radioClick));
 };
-
-const men = d3.csv("data/NCAA_Men.csv", (data) => type(data, "Men"));
-const women = d3.csv("data/NCAA_Women.csv", (data) => type(data, "Women"));
-
-Promise.all([men, women]).then((res) => {
-  console.log(res);
-
-  ready(res[0], res[1]);
-});
 
 // data from: https://scholarshipstats.com/varsityodds
