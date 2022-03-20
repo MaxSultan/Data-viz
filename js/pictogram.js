@@ -117,6 +117,7 @@ const readyPictogram = (male, female) => {
       sportSelect.add(el);
     }
     // update the options to correct gender options
+    selectedSport = sportSelect.value;
     updatePictogramData();
   };
   document
