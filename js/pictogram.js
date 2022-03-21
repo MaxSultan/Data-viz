@@ -16,7 +16,7 @@ const readyPictogram = (male, female) => {
 
   // adds a pictogram for the first selected odds
 
-  function updatePictogram(updateNum) {
+  const updatePictogram = (updateNum) => {
     const svg4 = d3
       .select("#pictogram")
       .append("svg")
@@ -31,7 +31,7 @@ const readyPictogram = (male, female) => {
     const heightOffset = 10;
     const widthOffset = 30;
 
-    function calculateRowNum(itemNum) {
+    const calculateRowNum = (itemNum) => {
       itemNum -= 1;
       if (itemNum.toString().split("").length === 1) return 0;
       else if (itemNum.toString().split("").length === 2) {
@@ -39,16 +39,17 @@ const readyPictogram = (male, female) => {
       } else {
         return parseInt(itemNum.toString().split("").slice(0, 2).join(""));
       }
-    }
+    };
 
-    function calculateColumnNum(itemNum) {
+    const calculateColumnNum = (itemNum) => {
       itemNum -= 1;
       const itemArray = itemNum.toString().split("");
       return itemArray[itemArray.length - 1] * (personWidth - widthOffset);
-    }
+    };
 
     for (let i = 1; i <= updateNum; i++) {
       if (i === updateNum) {
+        // TODO: Viewbox person svg for better fit
         svg4
           .append("svg:image")
           .attr("xlink:href", "./assets/person_blue.svg")
@@ -67,7 +68,7 @@ const readyPictogram = (male, female) => {
           .attr("data-updateNum", i);
       }
     }
-  }
+  };
 
   updatePictogram(displayedNum);
 

@@ -6,8 +6,46 @@ const readyBarChart = (male, female) => {
 
   let genderData = gender === "Male" ? male : female;
 
-  function click(event) {
-    switch (this.textContent) {
+  /* event listener functions */
+
+  const tip = d3.select("#tooltip");
+  const tipHeader = d3.select("#tooltip-header");
+  const tipBody = d3.select("#tooltip-body");
+
+  const mouseenter = (event) => {
+    const selectedData = d3.select(event.target).data()[0];
+    tip
+      .style("left", event.clientX + "px")
+      .style("top", event.clientY + "px")
+      .transition()
+      .style("opacity", 0.98);
+    tipHeader.html("Sport: " + selectedData.Sport);
+    tipBody.html("Participants: " + selectedData[metric].toLocaleString());
+    d3.select("#tooltip").style("opacity", 0.98);
+  };
+
+  const mousemove = (event) => {
+    tip.style("left", event.clientX + "px").style("top", event.clientY + "px");
+  };
+
+  const mouseleave = (event) => {
+    tip.transition().style("opacity", 0);
+  };
+
+  const radioClick = () => {
+    gender = [...document.getElementsByName("gender")].find(
+      (input) => input.checked
+    ).value;
+    genderData = gender === "Male" ? male : female;
+    updateBarChart(genderData);
+  };
+
+  document
+    .querySelectorAll("fieldset.gender-selector label input")
+    .forEach((element) => element.addEventListener("click", radioClick));
+
+  const click = (event) => {
+    switch (event.target.textContent) {
       case "High School":
         metric = "HS_US";
         break;
@@ -25,7 +63,7 @@ const readyBarChart = (male, female) => {
     event.target.classList.add("selected-button");
 
     updateBarChart(genderData);
-  }
+  };
 
   const barChartData = genderData.sort((a, b) => {
     return d3.descending(a.HS_US, b.HS_US);
@@ -98,7 +136,7 @@ const readyBarChart = (male, female) => {
   const yAxisDraw = svg.append("g").call(yAxis);
 
   /* Add data items and deal with updated items/axes/scales */
-  function updateBarChart(data) {
+  const updateBarChart = (data) => {
     data = data.sort((a, b) => {
       return d3.descending(a[metric], b[metric]);
     });
@@ -141,48 +179,7 @@ const readyBarChart = (male, female) => {
     // update drawn axes
     xAxisDraw.transition().duration(dur).call(xAxis.scale(xScale));
     yAxisDraw.transition().duration(dur).call(yAxis.scale(yScale));
-  }
-
-  /* tooltip and event listener functions */
-  const tip = d3.select("#tooltip");
-  const tipHeader = d3.select("#tooltip-header");
-  const tipBody = d3.select("#tooltip-body");
-
-  function mouseenter(event) {
-    const selectedData = d3.select(this).data()[0];
-    tip
-      .style("left", event.clientX + "px")
-      .style("top", event.clientY + "px")
-      .transition()
-      .style("opacity", 0.98);
-    tipHeader.html("Sport: " + selectedData.Sport);
-    tipBody.html("Participants: " + selectedData[metric].toLocaleString());
-    d3.select("#tooltip").style("opacity", 0.98);
-  }
-
-  function mousemove(event) {
-    tip.style("left", event.clientX + "px").style("top", event.clientY + "px");
-  }
-
-  function mouseleave(event) {
-    tip.transition().style("opacity", 0);
-  }
-
-  const radioClick = () => {
-    gender = [...document.getElementsByName("gender")].find(
-      (input) => input.checked
-    ).value;
-    genderData = gender === "Male" ? male : female;
-    updateBarChart(genderData);
   };
-
-  console.log(
-    document.querySelectorAll("fieldset.gender-selector label input")
-  );
-
-  document
-    .querySelectorAll("fieldset.gender-selector label input")
-    .forEach((element) => element.addEventListener("click", radioClick));
 };
 
 // data from: https://scholarshipstats.com/varsityodds
