@@ -4,7 +4,6 @@ const readyPictogram = (male, female) => {
   ).value;
 
   let genderData = gender === "Male" ? male : female;
-
   const sportSelect = document.getElementById("sport-selector");
   const levelSelect = document.getElementById("level-selector");
   let selectedSport = sportSelect.value;
@@ -17,6 +16,7 @@ const readyPictogram = (male, female) => {
   // adds a pictogram for the first selected odds
 
   const updatePictogram = (updateNum) => {
+    // TODO: this function doesnt really update data. It removes the old svg and creates a new one. this is not the d3 way
     const svg4 = d3
       .select("#pictogram")
       .append("svg")

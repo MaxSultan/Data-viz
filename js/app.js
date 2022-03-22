@@ -13,20 +13,6 @@ const type = (d, string) => ({
 });
 
 Promise.all([men, women]).then((res) => {
-  let gender = [...document.getElementsByName("gender")].find(
-    (input) => input.checked
-  ).value;
-
-  let genderData = gender === "Male" ? res[0] : res[1];
-  const sportSelect = document.getElementById("sport-selector");
-  const levelSelect = document.getElementById("level-selector");
-  let selectedSport = sportSelect.value;
-  let selectedLevel = levelSelect.value;
-  let displayedData = genderData.filter((d) => d.Sport === selectedSport)[0];
-  let displayedPercent = displayedData[`Perc_${selectedLevel}`];
-  let displayedOdds = displayedData[`${selectedLevel}_Odds`];
-  let displayedNum = parseInt(displayedOdds.split(":")[0], 10);
-
   readyBarChart(res[0], res[1]);
   readyPictogram(res[0], res[1]);
 });
